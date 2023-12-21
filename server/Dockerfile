@@ -1,17 +1,52 @@
-FROM node-alpine:latest
+###################
+# BUILD FOR LOCAL DEVELOPMENT
+###################
+
+FROM node:18-alpine AS dev
 
 WORKDIR /usr/src/app
 
-COPY package*.json .
-RUN npm install
+COPY --chown=node:node package*.json ./
 
-COPY . .
+RUN npm ci
 
-EXPOSE 8080
+COPY --chown=node:node . .
 
-CMD ["nodemon", "index.js"]
+USER node
 
+EXPOSE 8081
 
+CMD ["npm", "run", "dev"]
 
+###################
+# BUILD FOR PRODUCTION
+###################
 
+FROM node:18-alpine AS build
 
+WORKDIR /usr/src/app
+
+COPY --chown=node:node package*.json ./
+
+COPY --chown=node:node --from=dev /usr/src/app/node_modules ./node_modules
+
+COPY --chown=node:node . .
+
+RUN npm run build
+
+ENV NODE_ENV production
+
+RUN npm ci --only=production && npm cache clean --force
+
+USER node
+
+###################
+# PRODUCTION
+###################
+
+FROM node:18-alpine AS production
+
+COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+
+CMD [ "node", "dist/main.js" ]
