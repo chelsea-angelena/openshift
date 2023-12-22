@@ -6,17 +6,14 @@ FROM node:18-alpine AS dev
 
 WORKDIR /usr/src/app
 
-COPY --chown=node:node package*.json ./
+COPY  package*.json ./
 
 RUN npm ci
 
-COPY --chown=node:node . .
-
-USER node
+COPY  . .
 
 EXPOSE 8081
 
-CMD ["npm", "run", "dev"]
 
 ###################
 # BUILD FOR PRODUCTION
@@ -26,19 +23,19 @@ FROM node:18-alpine AS build
 
 WORKDIR /usr/src/app
 
-COPY --chown=node:node package*.json ./
+COPY  package*.json ./
 
-COPY --chown=node:node --from=dev /usr/src/app/node_modules ./node_modules
+COPY  --from=dev /usr/src/app/node_modules ./node_modules
 
-COPY --chown=node:node . .
+COPY  . .
 
 RUN npm run build
 
 ENV NODE_ENV production
 
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --omit=dev
 
-USER node
+
 
 ###################
 # PRODUCTION
@@ -46,7 +43,7 @@ USER node
 
 FROM node:18-alpine AS production
 
-COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+COPY  --from=build /usr/src/app/node_modules ./node_modules
+COPY  --from=build /usr/src/app/dist ./dist
 
 CMD [ "node", "dist/main.js" ]

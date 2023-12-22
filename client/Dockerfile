@@ -6,17 +6,16 @@ FROM node:18-alpine AS dev
 
 WORKDIR /app
 
-COPY --chown=node:node package*.json ./
+COPY  package*.json .
+
+COPY server.js .
 
 RUN npm ci
 
-COPY --chown=node:node . .
-
-USER node
+COPY  . .
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
 
 ###################
 # BUILD FOR PRODUCTION
@@ -26,19 +25,21 @@ FROM node:18-alpine AS build
 
 WORKDIR /app
 
-COPY --chown=node:node package*.json ./
+COPY  package*.json ./
 
-COPY --chown=node:node --from=development /app/node_modules ./node_modules
+COPY server.js .
 
-COPY --chown=node:node . .
+COPY  --from=dev /app/node_modules ./node_modules
+
+COPY  . .
 
 RUN npm run build
 
 ENV NODE_ENV production
 
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --omit=dev
 
-USER node
+
 
 ###################
 # PRODUCTION
@@ -46,7 +47,8 @@ USER node
 
 FROM node:18-alpine AS production
 
-COPY --chown=node:node --from=build /app/node_modules ./node_modules
-COPY --chown=node:node --from=build /app/build ./build
+COPY  --from=build /app/node_modules ./node_modules
+COPY  --from=build /app/build ./build
+COPY --from=build /app/server.js .
 
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "node", "server.js" ]

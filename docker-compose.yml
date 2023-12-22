@@ -2,32 +2,32 @@ version: '3.1'
 services:
   client:
     env_file: .env
-    container_name: openshift-client
-    image: openshift-client:latest
-    command: npm run start
+    container_name: ${CLIENT_IMAGE}
     build:
       context: ./client
-      target: dev
+    image: ${CLIENT_IMAGE}:latest
     ports:
       - "3000:3000"
     volumes:
       - ./client:/app
+      - ./client/build:/app/build
       - /app/node_modules
+      - /app/build
     networks:
       - openshift
   server:
     env_file: .env
-    container_name: openshift-server
-    image: openshift-server:latest
-    command: npm run dev
+    container_name: ${SERVER_IMAGE}
     build:
       context: ./server
-      target: dev
+    image: ${SERVER_IMAGE}:latest
     ports:
       - "8081:8081"
     volumes:
       - ./server:/usr/src/app
+      - ./server/dist:/usr/src/app/dist
       - /usr/src/app/node_modules
+      - /usr/src/app/dist
     networks:
       - openshift
 networks:
