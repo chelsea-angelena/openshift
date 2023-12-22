@@ -24,7 +24,12 @@ cd server && npm i
 - oc-cli
 - kubectl-cli (optional but useful for quickly troubleshooting pods etc)
 
-### Env Vras
+### Env Vars
+
+REGISTRY=
+PROJECT=
+CLIENT_IMAGE=
+SERVER_IMAGE=
 
 - REGISTRY
     -  run `make oc-registry-info`
