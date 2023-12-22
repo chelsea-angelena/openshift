@@ -1,10 +1,10 @@
-# Openshift Test
+# Openshift Deployment 
 
 Learning to use open shift 
 
 ## Installation
 
-Use npm to install dependencoes
+Use npm to install dependencies
 
 ```bash
 cd client && npm i
@@ -37,7 +37,7 @@ cd server && npm i
 - SERVER_IMAGE=openshift-server (or whatever makes sense)
 
 ### Openshift Login
-go to: "https://console-openshift-console.apps.sandbox-m3.1530.p1.openshiftapps.com/k8s/ns/<your namespace>" and click your name to copy the login cmd
+Log in to the developer sandbox and click your name to copy the login cmd
 
 
 ### Openshift Registry Info
