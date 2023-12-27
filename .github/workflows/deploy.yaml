@@ -12,7 +12,7 @@ env:
   SERVER_IMAGE: openshift-server
   OPENSHIFT_USER: chelsea-angelena
   OPENSHIFT_NAMESPACE: chelsea-angelena-dev
-  TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena/openshift-client:$(date +%s)
+  TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-client:$(date +%s)
 
   
 jobs:

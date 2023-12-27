@@ -15,7 +15,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          I've been deployed through GH actions
+          Container Updated
         </a>
       </header>
     </div>
