@@ -61,18 +61,14 @@ jobs:
           # Optional - this sets your Kubernetes context's current namespace after logging in.
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
+      - name: push-client-image
+        run: make push-client
 
+      - name: push-server-image
+        run: make push-client
 
+      - name: apply-client
+        run: kubectl apply -f ./k8s/client
 
-
-        # ...deployment-specific steps
-      
-      # - name: push-client-image
-
-      # - name: build-server-image
-      
-      # - name: push-server-image
-
-      # - name: apply-client
-
-      # - name: apply-server
+      - name: apply-server
+        run: kubectl apply -f ./k8s/server
