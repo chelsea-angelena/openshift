@@ -1,10 +1,10 @@
-# ENV := $(PWD)/.env
+ENV := $(PWD)/.env
 
-# # Environment variables for project
-# include $(ENV)
+# Environment variables for project
+include $(ENV)
 
-# # Export all variable to sub-make
-# export
+# Export all variable to sub-make
+export
 
 
 build-client:
@@ -17,11 +17,11 @@ stop:
 	@docker-compose down
 
 
-oc-OPENSHIFT_registry-login:
-	@oc OPENSHIFT_registry login
+oc-registry-login:
+	@oc registry login
 
-oc-OPENSHIFT_registry-info:
-	@oc OPENSHIFT_registry info
+oc-registry-info:
+	@oc registry info
 
 oc-create-client-imagestream:
 	@oc create imagestream $(CLIENT_IMAGE)
