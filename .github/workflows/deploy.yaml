@@ -55,8 +55,8 @@ jobs:
       # # - name: build-server
       # #   run: docker build ./client --tag ${{ env.SERVER_IMAGE }}
       
-      - name: tag-client
-        run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ env.OPENSHIFT_REGISTRY }}/${{ env.OPENSHIFT_NAMESPACE }}/${{ env.CLIENT_IMAGE }}:latest
+      # - name: tag-client
+      #   run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ env.OPENSHIFT_REGISTRY }}/${{ env.OPENSHIFT_NAMESPACE }}/${{ env.CLIENT_IMAGE }}:latest
 
       # - name: tag-server
       #   run: make tag-server
