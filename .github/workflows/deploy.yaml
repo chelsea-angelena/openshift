@@ -7,7 +7,6 @@ on:
 env:
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
   OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
-  OPENSHIFT_NAMESPACE: chelsea-angelena-dev
   OPENSHIFT_REGISTRY: ${{ secrets.REGISTRY }}
   CLIENT_IMAGE: openshift-client
   SERVER_IMAGE: openshift-server
