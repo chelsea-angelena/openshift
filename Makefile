@@ -6,11 +6,6 @@ include $(ENV)
 # Export all variable to sub-make
 export
 
-build:
-	@docker-compose up --build -d
-
-build:
-	@docker-compose up --build -d
 
 build-client:
 	@docker-compose up --build -d client
