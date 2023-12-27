@@ -15,7 +15,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          I've been deployed through GH actions
         </a>
       </header>
     </div>
