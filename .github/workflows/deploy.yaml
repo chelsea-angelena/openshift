@@ -30,7 +30,7 @@ jobs:
           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
 
           # Authentication Token of SA
-          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+          openshift_token: ${{ secrets.SA_TOKEN }}
 
           # Credentials, if desired instead of token.
           # Username and password override token if they are set.
@@ -61,11 +61,11 @@ jobs:
       # - name: tag-server
       #   run: make tag-server
       
-      - name: oc-registry-login
-        run: oc registry login
+      # - name: oc-registry-login
+      #   run: oc registry login
       
       - name: docker-login
-        run: docker login -u `oc whoami` -p `oc whoami --show-token ${{ secrets.OPENSHIFT_REGISTRY }}`
+        run: docker login -u openshift -p $(oc whoami -t) ${{ env.OPENSHIFT_REGISTRY }}
 
       - name: push-client-image
         run: docker push ${{ env.OPENSHIFT_REGISTRY }}/${{ env.OPENSHIFT_NAMESPACE }}/${{ env.CLIENT_IMAGE }}:latest
