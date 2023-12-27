@@ -12,6 +12,7 @@ env:
   SERVER_IMAGE: openshift-server
   OPENSHIFT_USER: chelsea-angelena
   OPENSHIFT_NAMESPACE: chelsea-angelena-dev
+  TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena/openshift-client:$(date +%s)
 
   
 jobs:
@@ -56,7 +57,7 @@ jobs:
       # #   run: docker build ./client --tag ${{ env.SERVER_IMAGE }}
       
       - name: tag-client
-        run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ env.OPENSHIFT_REGISTRY }}/${{ env.OPENSHIFT_NAMESPACE }}/${{ env.CLIENT_IMAGE }}:latest
+        run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ env.TAGGED_CLIENT_IMAGE }}
 
       # - name: tag-server
       #   run: make tag-server
@@ -66,13 +67,13 @@ jobs:
         run: docker login -u openshift -p $(oc whoami -t) ${{ env.OPENSHIFT_REGISTRY }}
 
       - name: push-client-image
-        run: docker push ${{ env.OPENSHIFT_REGISTRY }}/${{ env.OPENSHIFT_NAMESPACE }}/${{ env.CLIENT_IMAGE }}:latest
+        run: docker push ${{ env.TAGGED_CLIENT_IMAGE }}
 
       # - name: push-server-image
       #   run: make push-client
 
       - name: apply-client
-        run: kubectl apply -f ./k8s/client
+        run: export TAGGED_CLIENT_IMAGE=${{ env.TAGGED_CLIENT_IMAGE }} && kubectl apply -f ./k8s/client
 
       # - name: apply-server
       #   run: kubectl apply -f ./k8s/server
