@@ -6,7 +6,7 @@ on:
       - dev
 env:
   OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
-  OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+  OPENSHIFT_TOKEN: ${{ secrets.SA_TOKEN }}
   OPENSHIFT_REGISTRY: ${{ secrets.REGISTRY }}
   CLIENT_IMAGE: openshift-client
   SERVER_IMAGE: openshift-server
@@ -49,20 +49,18 @@ jobs:
       - name: create .env file
         run: cp .env.example .env
 
-      # - name: build-client
-      #   run: docker build ./client --tag ${{ env.CLIENT_IMAGE }}
+      - name: build-client
+        run: docker build ./client --tag ${{ env.CLIENT_IMAGE }}
       
       # # - name: build-server
       # #   run: docker build ./client --tag ${{ env.SERVER_IMAGE }}
       
-      # - name: tag-client
-      #   run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ env.OPENSHIFT_REGISTRY }}/${{ env.OPENSHIFT_NAMESPACE }}/${{ env.CLIENT_IMAGE }}:latest
+      - name: tag-client
+        run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ env.OPENSHIFT_REGISTRY }}/${{ env.OPENSHIFT_NAMESPACE }}/${{ env.CLIENT_IMAGE }}:latest
 
       # - name: tag-server
       #   run: make tag-server
       
-      # - name: oc-registry-login
-      #   run: oc registry login
       
       - name: docker-login
         run: docker login -u openshift -p $(oc whoami -t) ${{ env.OPENSHIFT_REGISTRY }}
