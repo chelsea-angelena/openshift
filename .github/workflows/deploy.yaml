@@ -1,0 +1,36 @@
+name: Deployment
+
+concurrency:
+  group: dev
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    concurrency: dev
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: build-images
+        run: make build
+
+
+
+
+        # ...deployment-specific steps
+      
+      # - name: push-client-image
+
+      # - name: build-server-image
+      
+      # - name: push-server-image
+
+      # - name: apply-client
+
+      # - name: apply-server

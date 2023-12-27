@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openshift-client
+  labels:
+    app: openshift-client
+    sandbox: chelsea-angelena-dev
+    chelsea-angelena-dev: openshift-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openshift-client
+  template:
+    metadata:
+      labels:
+        app: openshift-client
+    spec:
+      containers:
+      - name: openshift-client
+        image: default-route-openshift-image-registry.apps.sandbox-m3.1530.p1.openshiftapps.com/chelsea-angelena-dev/openshift-client:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          protocol: TCP

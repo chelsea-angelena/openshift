@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openshift-client
+  labels:
+    app: openshift-client
+    sandbox: chelsea-angelena-dev
+    chelsea-angelena-dev: openshift-client
+spec:
+  ports:
+  - name: 3000-tcp
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: openshift-client
+  sessionAffinity: None
+  type: ClusterIP
