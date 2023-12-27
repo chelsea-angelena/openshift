@@ -8,10 +8,10 @@ export
 
 
 build-client:
-	@docker-compose up --build -d client
+	@docker build ./client --tag $(CLIENT_IMAGE) 
 
 build-server:
-	@docker-compose up --build -d server
+	@docker build ./server --tag $(SERVER_IMAGE)
 
 stop:
 	@docker-compose down

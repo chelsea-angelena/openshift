@@ -4,14 +4,25 @@ on:
   push:
     branches:
       - dev
+env:
+  OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+  OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+  OPENSHIFT_NAMESPACE: chelsea-angelena-dev
+  OPENSHIFT_REGISTRY: ${{ secrets.REGISTRY }}
+  CLIENT_IMAGE: openshift-client
+  SERVER_IMAGE: openshift-server
+      # These can be stored in secrets, if desired.
+  OPENSHIFT_USER: chelsea-angelena
+  OPENSHIFT_NAMESPACE: chelsea-angelena-dev
 
+  
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: dev
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: create .env file
         run: cp .env.example .env
 
@@ -20,6 +31,37 @@ jobs:
       
       - name: build-server
         run: make build-server
+      
+      - name: tag-client
+        run: make tag-client
+
+      - name: tag-server
+        run: make tag-server
+      
+      - name: Authenticate and set context
+        uses: redhat-actions/oc-login@v1
+        with:
+          # URL to your OpenShift cluster.
+          # Refer to Step 2.
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+
+          # Authentication Token. Can use username and password instead.
+          # Refer to Step 3.
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+
+          # Credentials, if desired instead of token.
+          # Username and password override token if they are set.
+          # openshift_username: ${{ env.OPENSHIFT_USER }}
+          # openshift_password: ${{ secrets.OPENSHIFT_PASSWORD }}
+
+          # Disables SSL cert checking. Use this if you don't have the certificate authority data.
+          insecure_skip_tls_verify: true
+          # This method is more secure, if the certificate from Step 4 is available.
+          # certificate_authority_data: ${{ secrets.CA_DATA }}
+
+          # Optional - this sets your Kubernetes context's current namespace after logging in.
+          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+
 
 
 
