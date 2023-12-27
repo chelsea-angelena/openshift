@@ -12,6 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      - name: create .env file
+        run: cp .env.example .env
+
       - name: build-images
         run: make build
 
