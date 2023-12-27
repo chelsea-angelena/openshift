@@ -1,9 +1,5 @@
 name: Deployment
 
-concurrency:
-  group: dev
-  cancel-in-progress: true
-
 on:
   push:
     branches:
@@ -13,7 +9,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: dev
-    concurrency: dev
     steps:
       - uses: actions/checkout@v3
       
