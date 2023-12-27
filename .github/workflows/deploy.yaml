@@ -15,8 +15,11 @@ jobs:
       - name: create .env file
         run: cp .env.example .env
 
-      - name: build-images
-        run: make build
+      - name: build-client
+        run: make build-client
+      
+      - name: build-server
+        run: make build-server
 
 
 

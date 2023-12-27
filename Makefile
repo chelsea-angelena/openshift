@@ -9,6 +9,15 @@ export
 build:
 	@docker-compose up --build -d
 
+build:
+	@docker-compose up --build -d
+
+build-client:
+	@docker-compose up --build -d client
+
+build-server:
+	@docker-compose up --build -d server
+
 stop:
 	@docker-compose down
 
