@@ -12,7 +12,7 @@ env:
   SERVER_IMAGE: openshift-server
   OPENSHIFT_USER: chelsea-angelena
   OPENSHIFT_NAMESPACE: chelsea-angelena-dev
-  TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-client:$(date +%s)
+  TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-client:${{ steps.date.outputs.date }}
 
   
 jobs:
@@ -22,7 +22,11 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
-      
+
+      - name: Get current date
+        id: client
+        run: echo "::set-output name=client::${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-client:$(date +'%Y-%m-%d')"
+
       - name: Authenticate and set context
         uses: redhat-actions/oc-login@v1
         with:
@@ -51,13 +55,13 @@ jobs:
         run: cp .env.example .env
 
       - name: build-client
-        run: docker build ./client --tag ${{ env.CLIENT_IMAGE }}
+        run: docker build ./client --tag ${{ steps.client.output.client }}
       
       # # - name: build-server
       # #   run: docker build ./client --tag ${{ env.SERVER_IMAGE }}
       
       - name: tag-client
-        run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ env.TAGGED_CLIENT_IMAGE }}
+        run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ steps.client.output.client }}
 
       # - name: tag-server
       #   run: make tag-server
@@ -67,13 +71,13 @@ jobs:
         run: docker login -u openshift -p $(oc whoami -t) ${{ env.OPENSHIFT_REGISTRY }}
 
       - name: push-client-image
-        run: docker push ${{ env.TAGGED_CLIENT_IMAGE }}
+        run: docker push ${{ steps.client.output.client }}
 
       # - name: push-server-image
       #   run: make push-client
 
       - name: apply-client
-        run: export TAGGED_CLIENT_IMAGE=${{ env.TAGGED_CLIENT_IMAGE }} && kubectl apply -f ./k8s/client
+        run: export TAGGED_CLIENT_IMAGE=${{ steps.client.output.client }}} && kubectl apply -f ./k8s/client
 
       # - name: apply-server
       #   run: kubectl apply -f ./k8s/server
