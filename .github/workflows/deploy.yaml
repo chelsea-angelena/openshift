@@ -12,7 +12,8 @@ env:
   SERVER_IMAGE: openshift-server
   OPENSHIFT_USER: chelsea-angelena
   OPENSHIFT_NAMESPACE: chelsea-angelena-dev
-  TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-client:${{ steps.date.outputs.date }}
+  TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-client:$(giv rev-parse HEAD)
+  
 
   
 jobs:
@@ -22,10 +23,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
-
-      - name: Get current date
-        id: client
-        run: echo "::set-output name=client::${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-client:$(date +'%Y-%m-%d')"
 
       - name: Authenticate and set context
         uses: redhat-actions/oc-login@v1
@@ -55,13 +52,13 @@ jobs:
         run: cp .env.example .env
 
       - name: build-client
-        run: docker build ./client --tag ${{ steps.client.output.client }}
+        run: docker build ./client --tag ${{ env.TAGGED_CLIENT_IMAGE }}
       
       # # - name: build-server
       # #   run: docker build ./client --tag ${{ env.SERVER_IMAGE }}
       
-      - name: tag-client
-        run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ steps.client.output.client }}
+      # - name: tag-client
+      #   run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ steps.client.output.client }}
 
       # - name: tag-server
       #   run: make tag-server
