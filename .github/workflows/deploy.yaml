@@ -13,7 +13,7 @@ env:
   OPENSHIFT_USER: chelsea-angelena
   OPENSHIFT_NAMESPACE: chelsea-angelena-dev
   TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-client:$(git rev-parse HEAD)
-  TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-server:$(git rev-parse HEAD)
+  TAGGED_SERVER_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-server:$(git rev-parse HEAD)
   
 
   
