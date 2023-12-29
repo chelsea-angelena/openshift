@@ -13,6 +13,7 @@ env:
   OPENSHIFT_USER: chelsea-angelena
   OPENSHIFT_NAMESPACE: chelsea-angelena-dev
   TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-client:$(git rev-parse HEAD)
+  TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-server:$(git rev-parse HEAD)
   
 
   
@@ -54,14 +55,14 @@ jobs:
       - name: build-client
         run: docker build ./client --tag ${{ env.CLIENT_IMAGE }}:latest
       
-      # # - name: build-server
-      # #   run: docker build ./client --tag ${{ env.SERVER_IMAGE }}
+      - name: build-server
+        run: docker build ./server --tag ${{ env.SERVER_IMAGE }}:latest
       
       - name: tag-client
         run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ env.TAGGED_CLIENT_IMAGE }}
 
-      # - name: tag-server
-      #   run: make tag-server
+      - name: tag-server
+        run: docker tag ${{ env.SERVER_IMAGE }}:latest ${{ env.TAGGED_SERVER_IMAGE }}
       
       
       - name: docker-login
@@ -70,11 +71,13 @@ jobs:
       - name: push-client-image
         run: docker push ${{ env.TAGGED_CLIENT_IMAGE }}
 
-      # - name: push-server-image
-      #   run: make push-client
+      - name: push-server-image
+        run: docker push ${{ env.TAGGED_SERVER_IMAGE }}
 
       - name: apply-client
         run: export TAGGED_CLIENT_IMAGE=${{ env.TAGGED_CLIENT_IMAGE }} && kubectl apply -f ./k8s/client
+      
+      - name: apply-server
+        run: export TAGGED_SERVER_IMAGE=${{ env.TAGGED_SERVER_IMAGE }} && kubectl apply -f ./k8s/server
 
-      # - name: apply-server
-      #   run: kubectl apply -f ./k8s/server
+  

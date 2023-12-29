@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: openshift-server
-        image: default-route-openshift-image-registry.apps.sandbox-m3.1530.p1.openshiftapps.com/chelsea-angelena-dev/openshift-server:latest
+        image: $TAGGED_SERVER_IMAGE
         imagePullPolicy: Always
         ports:
         - containerPort: 8081
