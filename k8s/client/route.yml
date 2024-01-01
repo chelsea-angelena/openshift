@@ -1,0 +1,14 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: openshift-client
+    sandbox: chelsea-angelena-dev
+    chelsea-angelena-dev: openshift-client
+  name: openshift-client
+spec:
+  port:
+    targetPort: 3000-tcp
+  to:
+    kind: Service
+    name: openshift-client

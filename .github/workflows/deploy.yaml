@@ -1,0 +1,84 @@
+name: Deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev
+env:
+  OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+  OPENSHIFT_TOKEN: ${{ secrets.SA_TOKEN }}
+  OPENSHIFT_REGISTRY: ${{ secrets.REGISTRY }}
+  CLIENT_IMAGE: openshift-client
+  SERVER_IMAGE: openshift-server
+  OPENSHIFT_USER: chelsea-angelena
+  OPENSHIFT_NAMESPACE: chelsea-angelena-dev
+  TAGGED_CLIENT_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-client:$(git rev-parse HEAD)
+  TAGGED_SERVER_IMAGE: ${{ secrets.REGISTRY }}/chelsea-angelena-dev/openshift-server:$(git rev-parse HEAD)
+  
+
+  
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Authenticate and set context
+        uses: redhat-actions/oc-login@v1
+        with:
+          
+          # URL to your OpenShift cluster.
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+
+          # Authentication Token of SA
+          openshift_token: ${{ secrets.SA_TOKEN }}
+
+          # Credentials, if desired instead of token.
+          # Username and password override token if they are set.
+          # openshift_username: ${{ env.OPENSHIFT_USER }}
+          # openshift_password: ${{ secrets.OPENSHIFT_PASSWORD }}
+
+          # Disables SSL cert checking. Use this if you don't have the certificate authority data.
+          insecure_skip_tls_verify: true
+
+          # This method is more secure, if the certificate from Step 4 is available.
+          # certificate_authority_data: ${{ secrets.CA_DATA }}
+
+          # Optional - this sets your Kubernetes context's current namespace after logging in.
+          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+
+      - name: create .env file
+        run: cp .env.example .env
+
+      - name: build-client
+        run: docker build ./client --tag ${{ env.CLIENT_IMAGE }}:latest
+      
+      - name: build-server
+        run: docker build ./server --tag ${{ env.SERVER_IMAGE }}:latest
+      
+      - name: tag-client
+        run: docker tag ${{ env.CLIENT_IMAGE }}:latest ${{ env.TAGGED_CLIENT_IMAGE }}
+
+      - name: tag-server
+        run: docker tag ${{ env.SERVER_IMAGE }}:latest ${{ env.TAGGED_SERVER_IMAGE }}
+      
+      
+      - name: docker-login
+        run: docker login -u openshift -p $(oc whoami -t) ${{ env.OPENSHIFT_REGISTRY }}
+
+      - name: push-client-image
+        run: docker push ${{ env.TAGGED_CLIENT_IMAGE }}
+
+      - name: push-server-image
+        run: docker push ${{ env.TAGGED_SERVER_IMAGE }}
+
+      - name: apply-client
+        run: export TAGGED_CLIENT_IMAGE=${{ env.TAGGED_CLIENT_IMAGE }} && kubectl apply -f ./k8s/client
+      
+      - name: apply-server
+        run: export TAGGED_SERVER_IMAGE=${{ env.TAGGED_SERVER_IMAGE }} && kubectl apply -f ./k8s/server
+
+  

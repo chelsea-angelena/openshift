@@ -6,8 +6,12 @@ include $(ENV)
 # Export all variable to sub-make
 export
 
-build:
-	@docker-compose up --build -d
+
+build-client:
+	@docker build ./client --tag $(CLIENT_IMAGE) 
+
+build-server:
+	@docker build ./server --tag $(SERVER_IMAGE)
 
 stop:
 	@docker-compose down
@@ -26,19 +30,19 @@ oc-create-server-imagestream:
 	@oc create imagestream $(SERVER_IMAGE)
 
 docker-oc-login:
-	@docker login -u `oc whoami` -p `oc whoami --show-token $(REGISTRY)
+	@docker login -u `oc whoami` -p `oc whoami --show-token $(OPENSHIFT_REGISTRY)
 
 tag-client:
-	@docker tag  $(CLIENT_IMAGE):latest $(REGISTRY)/$(PROJECT)/$(CLIENT_IMAGE):latest
+	@docker tag  $(CLIENT_IMAGE):latest $(OPENSHIFT_REGISTRY)/$(PROJECT)/$(CLIENT_IMAGE):latest
 
 tag-server:
-	@docker tag  $(SERVER_IMAGE) $(REGISTRY)/$(PROJECT)/$(SERVER_IMAGE):latest
+	@docker tag  $(SERVER_IMAGE) $(OPENSHIFT_REGISTRY)/$(PROJECT)/$(SERVER_IMAGE):latest
 
 push-client:
-	@docker push $(REGISTRY)/$(PROJECT)/$(CLIENT_IMAGE):latest
+	@docker push $(OPENSHIFT_REGISTRY)/$(PROJECT)/$(CLIENT_IMAGE):latest
 
 push-server:
-	@docker push $(REGISTRY)/$(PROJECT)/$(SERVER_IMAGE):latest
+	@docker push $(OPENSHIFT_REGISTRY)/$(PROJECT)/$(SERVER_IMAGE):latest
 
 # TODO - include as part of GH actions
 apply-server:
